@@ -1,0 +1,72 @@
+{% extends 'homepage/header.html' %}
+{% load static %}
+{% block content %}
+<style>
+    .evaluation {
+        padding: 120px 0;
+        position: relative;
+    }
+
+    .job-status {
+        background-color: #fff;
+        border: 0.5px solid rgba(0, 0, 0, .5);
+        padding: 10px;
+        /* margin: 10px; */
+        width: 100%;
+    }
+
+    #decline-button {
+        width: 200px;
+        margin: 50px;
+    }
+
+    #accept-button {
+        width: 200px;
+        margin: 50px;
+    }
+
+    .text-center p {
+        font-size: 20px;
+        padding: 4px;
+    }
+</style>
+<div class="evaluation">
+    <div class="container">
+        <h3>Evaluation</h3>
+        <div class="col-12 card job-status">
+
+            <div class="text-center">
+                <h5>Are you optimal for this job?</h5>
+                <p>Client: Rudolf Industries</p>
+                <p>Primary Language: {{ language }}</p>
+                <p>Services: Create Captions and Look for content</p>
+                <p>Job Length: 14 Days</p>
+                <p>Platforms: Facebook and Instagram</p>
+                <p>Engagement: True</p>
+                <p>Post for client: True</p>
+                <p>Payment: Unknown</p>
+                <!-- <a href="#" id="decline-button" class="btn btn-outline-danger">Decline</a><a href="#"
+                        id="accept-button" class="btn btn-outline-success">Accept</a> -->
+                <div class="row">
+                    <div class="col-sm-12 col-md-6">
+                        <form method="POST">
+                            {% csrf_token %}
+                            <input type="hidden" name="accepted-post" id="accepted-post" value="False">
+                            <input id="decline-button" type="submit" class="btn btn-outline-danger" value="Decline">
+                        </form>
+
+                    </div>
+                    <div class="col-sm-12 col-md-6">
+                        <form method="POST">
+                            {% csrf_token %}
+                            <input type="hidden" name="accepted-post" id="accepted-post" value="True">
+                            <input id="accept-button" type="submit" class="btn btn-outline-success" value="Accept">
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <!-- <input type="submit" id="submit-button" class="btn btn-success" value="Next Page"> -->
+        </div>
+    </div>
+</div>
+{% endblock %}

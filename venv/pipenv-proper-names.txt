@@ -1,0 +1,8 @@
+Automat
+Django
+Pillow
+PyHamcrest
+pyOpenSSL
+service_identity
+Twisted
+zope.interface

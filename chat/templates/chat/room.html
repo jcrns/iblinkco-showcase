@@ -1,0 +1,628 @@
+{% extends 'homepage/header.html' %}
+{% load static %}
+{% block content %}
+<style>
+    .chat {
+        padding: 130px 0;
+        background-color: #fff;
+        width: 100%;
+    }
+    .incoming_msg {
+        overflow: hidden;
+        margin: 26px 0 26px;
+    }
+    .msg-img {
+        max-width: 200px;
+        max-width: 200px;
+    }
+    .msg-img:hover {
+        cursor: pointer;
+    }
+</style>
+<link rel="stylesheet" href="{% static 'homepage/css/chat.css' %}" type="text/css">
+<div class="chat">
+    <div class="container">
+        <h3 class=" text-center" id="message-name" data-image="{{ involvedUser.image.url }}">Message {{ involvedUserName }}</h3>
+        {% if user.profile.is_client == True %}
+            <p class="text-center">For steps to share your social media accounts with your manager. <a href="{% url 'homepage-connect-socials' %}">Click Here</a></p>
+        {% else %}
+            <p class="text-center">For steps to receiving access to your clients social media. <a
+                    href="{% url 'homepage-connect-socials' %}">Click Here</a></p>
+        {% endif %}
+        <div class="messaging">
+            <div class="inbox_msg">
+                <div class="mesgs h-100">
+                    <div id="msg_history"></div>
+                </div>
+            </div>
+            <div class="type_msg">
+                <div class="input_msg_write">
+                    <input id="chat-message-input" type="text" class="write_msg" placeholder="Type a message">
+                    <!-- <a href="#"><img src="{% static 'homepage/img/file-upload.png' %}" class="file-upload"></a> -->
+
+                    <div class="image-upload">
+                        <label for="file-input">
+                            <img src="{% static 'homepage/img/file-upload.png' %}" class="file-upload">
+                        </label>
+                        <input id="file-input" type="file" />
+                    </div>
+
+                    <button id="chat-message-submit" class="msg_send_btn" type="button"><i class="fa fa-paper-plane-o"
+                            aria-hidden="true"></i></button>
+                </div>
+            </div>
+        </div>
+        {% comment %} <ul id="test-show"></ul> {% endcomment %}
+    </div>
+</div>
+<script>
+    (function (global, factory) {
+        if (typeof define === 'function' && define.amd) {
+            define([], factory);
+        } else if (typeof module !== 'undefined' && module.exports) {
+            module.exports = factory();
+        } else {
+            global.ReconnectingWebSocket = factory();
+        }
+    })(this, function () {
+
+        if (!('WebSocket' in window)) {
+            return;
+        }
+
+
+        function ReconnectingWebSocket(url, protocols, options) {
+
+            // Default settings
+            var settings = {
+
+                /** Whether this instance should log debug messages. */
+                debug: false,
+
+                /** Whether or not the websocket should attempt to connect immediately upon instantiation. */
+                automaticOpen: true,
+
+                /** The number of milliseconds to delay before attempting to reconnect. */
+                reconnectInterval: 1000,
+                /** The maximum number of milliseconds to delay a reconnection attempt. */
+                maxReconnectInterval: 30000,
+                /** The rate of increase of the reconnect delay. Allows reconnect attempts to back off when problems persist. */
+                reconnectDecay: 1.5,
+
+                /** The maximum time in milliseconds to wait for a connection to succeed before closing and retrying. */
+                timeoutInterval: 2000,
+
+                /** The maximum number of reconnection attempts to make. Unlimited if null. */
+                maxReconnectAttempts: null,
+
+                /** The binary type, possible values 'blob' or 'arraybuffer', default 'blob'. */
+                binaryType: 'blob'
+            }
+            if (!options) {
+                options = {};
+            }
+
+            // Overwrite and define settings with options if they exist.
+            for (var key in settings) {
+                if (typeof options[key] !== 'undefined') {
+                    this[key] = options[key];
+                } else {
+                    this[key] = settings[key];
+                }
+            }
+
+            // These should be treated as read-only properties
+
+            /** The URL as resolved by the constructor. This is always an absolute URL. Read only. */
+            this.url = url;
+
+            /** The number of attempted reconnects since starting, or the last successful connection. Read only. */
+            this.reconnectAttempts = 0;
+
+            /**
+             * The current state of the connection.
+             * Can be one of: WebSocket.CONNECTING, WebSocket.OPEN, WebSocket.CLOSING, WebSocket.CLOSED
+             * Read only.
+             */
+            this.readyState = WebSocket.CONNECTING;
+
+            /**
+             * A string indicating the name of the sub-protocol the server selected; this will be one of
+             * the strings specified in the protocols parameter when creating the WebSocket object.
+             * Read only.
+             */
+            this.protocol = null;
+
+            // Private state variables
+
+            var self = this;
+            var ws;
+            var forcedClose = false;
+            var timedOut = false;
+            var eventTarget = document.createElement('div');
+
+            // Wire up "on*" properties as event handlers
+
+            eventTarget.addEventListener('open', function (event) {
+                self.onopen(event);
+            });
+            eventTarget.addEventListener('close', function (event) {
+                self.onclose(event);
+            });
+            eventTarget.addEventListener('connecting', function (event) {
+                self.onconnecting(event);
+            });
+            eventTarget.addEventListener('message', function (event) {
+                self.onmessage(event);
+            });
+            eventTarget.addEventListener('error', function (event) {
+                self.onerror(event);
+            });
+
+            // Expose the API required by EventTarget
+
+            this.addEventListener = eventTarget.addEventListener.bind(eventTarget);
+            this.removeEventListener = eventTarget.removeEventListener.bind(eventTarget);
+            this.dispatchEvent = eventTarget.dispatchEvent.bind(eventTarget);
+
+            /**
+             * This function generates an event that is compatible with standard
+             * compliant browsers and IE9 - IE11
+             *
+             * This will prevent the error:
+             * Object doesn't support this action
+             *
+             * http://stackoverflow.com/questions/19345392/why-arent-my-parameters-getting-passed-through-to-a-dispatched-event/19345563#19345563
+             * @param s String The name that the event should use
+             * @param args Object an optional object that the event will use
+             */
+            function generateEvent(s, args) {
+                var evt = document.createEvent("CustomEvent");
+                evt.initCustomEvent(s, false, false, args);
+                return evt;
+            };
+
+            this.open = function (reconnectAttempt) {
+                ws = new WebSocket(self.url, protocols || []);
+                ws.binaryType = this.binaryType;
+
+                if (reconnectAttempt) {
+                    if (this.maxReconnectAttempts && this.reconnectAttempts > this.maxReconnectAttempts) {
+                        return;
+                    }
+                } else {
+                    eventTarget.dispatchEvent(generateEvent('connecting'));
+                    this.reconnectAttempts = 0;
+                }
+
+                if (self.debug || ReconnectingWebSocket.debugAll) {
+                    console.debug('ReconnectingWebSocket', 'attempt-connect', self.url);
+                }
+
+                var localWs = ws;
+                var timeout = setTimeout(function () {
+                    if (self.debug || ReconnectingWebSocket.debugAll) {
+                        console.debug('ReconnectingWebSocket', 'connection-timeout', self.url);
+                    }
+                    timedOut = true;
+                    localWs.close();
+                    timedOut = false;
+                }, self.timeoutInterval);
+
+                ws.onopen = function (event) {
+                    clearTimeout(timeout);
+                    if (self.debug || ReconnectingWebSocket.debugAll) {
+                        console.debug('ReconnectingWebSocket', 'onopen', self.url);
+                    }
+                    self.protocol = ws.protocol;
+                    self.readyState = WebSocket.OPEN;
+                    self.reconnectAttempts = 0;
+                    var e = generateEvent('open');
+                    e.isReconnect = reconnectAttempt;
+                    reconnectAttempt = false;
+                    eventTarget.dispatchEvent(e);
+                };
+
+                ws.onclose = function (event) {
+                    clearTimeout(timeout);
+                    ws = null;
+                    if (forcedClose) {
+                        self.readyState = WebSocket.CLOSED;
+                        eventTarget.dispatchEvent(generateEvent('close'));
+                    } else {
+                        self.readyState = WebSocket.CONNECTING;
+                        var e = generateEvent('connecting');
+                        e.code = event.code;
+                        e.reason = event.reason;
+                        e.wasClean = event.wasClean;
+                        eventTarget.dispatchEvent(e);
+                        if (!reconnectAttempt && !timedOut) {
+                            if (self.debug || ReconnectingWebSocket.debugAll) {
+                                console.debug('ReconnectingWebSocket', 'onclose', self.url);
+                            }
+                            eventTarget.dispatchEvent(generateEvent('close'));
+                        }
+
+                        var timeout = self.reconnectInterval * Math.pow(self.reconnectDecay, self.reconnectAttempts);
+                        setTimeout(function () {
+                            self.reconnectAttempts++;
+                            self.open(true);
+                        }, timeout > self.maxReconnectInterval ? self.maxReconnectInterval : timeout);
+                    }
+                };
+                ws.onmessage = function (event) {
+                    if (self.debug || ReconnectingWebSocket.debugAll) {
+                        console.debug('ReconnectingWebSocket', 'onmessage', self.url, event.data);
+                    }
+                    var e = generateEvent('message');
+                    e.data = event.data;
+                    eventTarget.dispatchEvent(e);
+                };
+                ws.onerror = function (event) {
+                    if (self.debug || ReconnectingWebSocket.debugAll) {
+                        console.debug('ReconnectingWebSocket', 'onerror', self.url, event);
+                    }
+                    eventTarget.dispatchEvent(generateEvent('error'));
+                };
+            }
+
+            // Whether or not to create a websocket upon instantiation
+            if (this.automaticOpen == true) {
+                this.open(false);
+            }
+
+            /**
+             * Transmits data to the server over the WebSocket connection.
+             *
+             * @param data a text string, ArrayBuffer or Blob to send to the server.
+             */
+            this.send = function (data) {
+                if (ws) {
+                    if (self.debug || ReconnectingWebSocket.debugAll) {
+                        console.debug('ReconnectingWebSocket', 'send', self.url, data);
+                    }
+                    return ws.send(data);
+                } else {
+                    throw 'INVALID_STATE_ERR : Pausing to reconnect websocket';
+                }
+            };
+
+            /**
+             * Closes the WebSocket connection or connection attempt, if any.
+             * If the connection is already CLOSED, this method does nothing.
+             */
+            this.close = function (code, reason) {
+                // Default CLOSE_NORMAL code
+                if (typeof code == 'undefined') {
+                    code = 1000;
+                }
+                forcedClose = true;
+                if (ws) {
+                    ws.close(code, reason);
+                }
+            };
+
+            /**
+             * Additional public API method to refresh the connection if still open (close, re-open).
+             * For example, if the app suspects bad data / missed heart beats, it can try to refresh.
+             */
+            this.refresh = function () {
+                if (ws) {
+                    ws.close();
+                }
+            };
+        }
+
+        /**
+         * An event listener to be called when the WebSocket connection's readyState changes to OPEN;
+         * this indicates that the connection is ready to send and receive data.
+         */
+        ReconnectingWebSocket.prototype.onopen = function (event) { };
+        /** An event listener to be called when the WebSocket connection's readyState changes to CLOSED. */
+        ReconnectingWebSocket.prototype.onclose = function (event) { };
+        /** An event listener to be called when a connection begins being attempted. */
+        ReconnectingWebSocket.prototype.onconnecting = function (event) { };
+        /** An event listener to be called when a message is received from the server. */
+        ReconnectingWebSocket.prototype.onmessage = function (event) { };
+        /** An event listener to be called when an error occurs. */
+        ReconnectingWebSocket.prototype.onerror = function (event) { };
+
+        /**
+         * Whether all instances of ReconnectingWebSocket should log debug messages.
+         * Setting this to true is the equivalent of setting all instances of ReconnectingWebSocket.debug to true.
+         */
+        ReconnectingWebSocket.debugAll = false;
+
+        ReconnectingWebSocket.CONNECTING = WebSocket.CONNECTING;
+        ReconnectingWebSocket.OPEN = WebSocket.OPEN;
+        ReconnectingWebSocket.CLOSING = WebSocket.CLOSING;
+        ReconnectingWebSocket.CLOSED = WebSocket.CLOSED;
+
+        return ReconnectingWebSocket;
+    });
+
+
+    // CONNECTION CONTENT
+
+
+
+
+
+
+
+
+
+
+
+    
+    function scrollDown(){
+        let scroll = document.getElementsByClassName('inbox_msg')[0];
+        scroll.scrollTop = scroll.scrollHeight;
+    }
+
+    var roomName = {{ room_name }}
+    var username = {{ username }}
+
+    if(window.location.protocol == 'https:'){
+        var wsStart = 'wss://'
+    } else {
+        var wsStart = 'ws://'
+    }
+
+    // Defining connection
+    const chatSocket = new ReconnectingWebSocket(
+        wsStart
+        + window.location.host
+        + '/ws/chat/'
+        + roomName
+        + '/'
+    );
+    // chatSocket.
+    console.log(window.location)
+    console.log(chatSocket)
+
+    // Image upload
+    $(document).ready(function () {
+        $("input[type=file]").click(function () {
+            $(this).val("");
+        });
+
+        $("input[type=file]").change(function () {
+            // alert($(this).val());
+            let photo = document.getElementById("file-input").files[0];
+            // alert(photo);
+            // let formData = new FormData();
+            // formData.append("photo", photo);
+            // alert(formData)
+            
+            chatSocket.send(JSON.stringify({
+                'command': 'new_file',
+                'message': photo,
+                'from': username,
+            }));
+
+        });
+    });
+
+    // Defining method on open
+    chatSocket.onopen = function(e) {
+        fetchMessages();
+    }
+    
+    function fetchMessages(){
+        chatSocket.send(JSON.stringify({'command' : 'fetch_messages'}))
+    }
+    chatSocket.onmessage = function (e) {
+
+        // Getting data
+        const data = JSON.parse(e.data);
+
+        // Checking if messages are being retrieved
+        if(data['command'] == 'messages'){
+            const msgHistoryDiv = document.getElementById('msg_history');
+            msgHistoryDiv.innerHTML = '';
+            for(i=0; i<data['messages'].length; i++){
+                createMessage(data['messages'][i], data['command']);
+                console.log(JSON.stringify(data['messages'][i]))
+            }
+
+            // When multiple messages are being retrieved we run the read all func
+            readAll();
+        } else if(data['command'] == 'new_message'){
+            createMessage(data['message'], data['command']);
+        } else if(data['command'] == 'new_file'){
+            uploadFile(data['message'], data['command'])
+        }
+        // Scrolling down
+        scrollDown();
+    };
+
+    // Function to show image
+    function uploadFile(data, command){
+        
+    }
+
+    // Function to show text message
+    function createMessage(data, command){
+        const message = data['content'];
+        const author = data['author'];
+        const timestamp = data['timestamp'];
+        const msgId = data['message_id'];
+
+        console.log("message: " + JSON.stringify(data))
+        
+        // Getting main div
+        const mainDiv = document.getElementById('msg_history');
+        
+        // Check if message is img
+        console.log("\n\n\n\n\nmessage" + message)
+
+        // test test
+
+        // Checking if user is sending message
+        if (author == username) {
+
+            // Creating main sending div
+            const sendTxt = document.createElement('div');
+            sendTxt.setAttribute("class", "outgoing_msg");
+            mainDiv.appendChild(sendTxt)
+
+            const sentMsg = document.createElement('div');
+            sentMsg.classList.add("sent_msg");
+            sendTxt.appendChild(sentMsg)
+
+            const sentMsgText = document.createElement('p');
+            sentMsg.appendChild(sentMsgText)
+
+            const sentMsgTimestamp = document.createElement('span');
+            console.log(timestamp)
+            let date = new Date(timestamp);
+            let formattedDate = formatDate(date)
+            sentMsgTimestamp.setAttribute("class", "timestamp");
+            sentMsgTimestamp.innerHTML = formattedDate;
+            sentMsg.appendChild(sentMsgTimestamp);
+
+            // Checking if message is image
+            if (checkUrlImage(message) == false) {
+                // Creating elements
+
+                sentMsgText.innerHTML = message;
+            } else {
+                
+                const sendMsgImg = document.createElement('img');
+                sendMsgImg.setAttribute("class", "msg-img");
+                sendMsgImg.src = message;
+
+                // Setting onclick for element
+                sendMsgImg.setAttribute("onclick", "imageOnClick(this)")
+
+                sentMsgText.appendChild(sendMsgImg)
+            }
+
+        // User is not sender
+        } else {
+
+            // Creating main incoming msg section
+            const receiveMsgMainDiv = document.createElement('div');
+            receiveMsgMainDiv.setAttribute("class","incoming_msg");
+            mainDiv.appendChild(receiveMsgMainDiv)
+
+            const receiveMsgImgDiv = document.createElement('div');
+            receiveMsgImgDiv.setAttribute("class","incoming_msg_img");
+            receiveMsgMainDiv.appendChild(receiveMsgImgDiv)
+            
+
+            // Adding profile image of user in party
+            const receiveMsgImg = document.createElement('img');
+            // Getting image url
+            const involvedUserImage = document.getElementById('message-name').dataset.image;
+            // Applying image to element
+            receiveMsgImg.src = involvedUserImage;
+            receiveMsgImgDiv.appendChild(receiveMsgImg)
+
+            // Creating main div
+            const recieveMsgDiv = document.createElement('div');
+            recieveMsgDiv.setAttribute("class", "received_msg");
+            receiveMsgMainDiv.appendChild(recieveMsgDiv)
+            
+            const recieveMsgTextDiv = document.createElement('div');
+            recieveMsgTextDiv.setAttribute("class", "received_withd_msg");
+            recieveMsgDiv.appendChild(recieveMsgTextDiv)
+
+            const recieveMsgImgP = document.createElement('p');
+            recieveMsgTextDiv.appendChild(recieveMsgImgP)
+            
+            const recieveMsgTimestamp = document.createElement('span');
+            console.log(timestamp)
+            let date = new Date(timestamp);
+            let formattedDate = formatDate(date)
+            recieveMsgTimestamp.setAttribute("class", "timestamp");
+            recieveMsgTimestamp.innerHTML = formattedDate;
+            recieveMsgTextDiv.appendChild(recieveMsgTimestamp);
+
+            // Checking if message is image
+            if (checkUrlImage(message) == false) {
+                
+                recieveMsgImgP.innerHTML = message;
+            } else {
+
+                const recieveMsgImg = document.createElement('img');
+                recieveMsgImg.setAttribute("class", "msg-img");
+                recieveMsgImg.src = message;
+
+                recieveMsgImgP.appendChild(recieveMsgImg)
+            }
+
+            // Call func to send the viewing of the message
+            if(command == 'new_message'){
+                chatViewed(msgId);
+            }
+        }
+    }
+
+    // Function saying that message was viewed
+    function chatViewed(msgId){
+        chatSocket.send(JSON.stringify({
+            'message_id' : msgId,
+            'command': 'chat_viewed',
+            'viewer': username,
+        }));
+    }
+
+    function readAll(){
+        chatSocket.send(JSON.stringify({
+            'command': 'read_all',
+            'viewer': username,
+        }));
+    }
+    
+    function formatDate(date){
+        const ye = new Intl.DateTimeFormat('en', { year: 'numeric' }).format(date);
+        const mo = new Intl.DateTimeFormat('en', { month: 'short' }).format(date);
+        const da = new Intl.DateTimeFormat('en', { day: '2-digit' }).format(date);
+        const hr = new Intl.DateTimeFormat('en', { hour: '2-digit' }).format(date);
+        const min = new Intl.DateTimeFormat('en', { minute: 'numeric' }).format(date);
+        const sec = new Intl.DateTimeFormat('en', { second: '2-digit' }).format(date);
+        return `${mo} ${da}, ${ye}  || ${hr}`
+    }
+    // On open func 
+    chatSocket.onclose = function (e) {
+        console.error('Chat socket closed unexpectedly');
+        setTimeout(function () {
+            connect();
+        }, 1000);
+    };
+
+    document.querySelector('#chat-message-input').focus();
+    document.querySelector('#chat-message-input').onkeyup = function (e) {
+        if (e.keyCode === 13) {  // enter, return
+            document.querySelector('#chat-message-submit').click();
+        }
+    };
+
+    document.querySelector('#chat-message-submit').onclick = function (e) {
+        const messageInputDom = document.querySelector('#chat-message-input');
+        const message = messageInputDom.value;
+        chatSocket.send(JSON.stringify({
+            'command': 'new_message',
+            'message': message,
+            'from': username,
+        }));
+        messageInputDom.value = '';
+    };
+    
+    function checkUrlImage(url) {
+        var urlParts = url.split('?');
+        var trueUrl = urlParts[0];
+        return (trueUrl.match(/\.(jpeg|jpg|gif|png)$/) != null);
+    }
+
+    function imageOnClick(e) {
+        console.log(e.src);
+        link = e.src;
+        var openLink = window.open(link, '_blank');
+        openLink.focus();
+    }
+
+</script>
+{% endblock %}

@@ -1,0 +1,42 @@
+{% extends 'homepage/header.html' %}
+{% load static %}
+{% block content %}
+<style>
+    .evaluation {
+        padding: 120px 0;
+        position: relative;
+        background-color: #F5F5F5;
+    }
+    #sub-title {
+        color: #797687;
+    }
+    ul li {
+        font-size: 25px;
+        margin-top: 20px;
+    }
+    #submit-button {
+        width: 200px;
+    }
+</style>
+<div class="evaluation">
+    <div class="container">
+        <h3>Kick off Evaluation</h3>
+        <h5 id="sub-title">Thanks for creating a profile with iBlinkco! The next step is to evaluate your knowledge of social media marketing for
+        small businesses.</h5>
+        <p>This evaluation may take over 30 minutes. We prefer more detailed answers.</p>
+        <p>We will evaluate your ability to</p>
+        <ul>
+            <li>Identify content online relevant to your clients and to create post with it</li>
+            <li>Create descriptive captions with given post</li>
+            <li>Find and create relevant hashtags</li>
+            <li>Your grammar and punctuation while conducting these jobs</li>
+            <li>Being non formulaic by using creativity to conduct your work</li>
+            <li>Analyze problems and inconsistencies with clients' social media</li>
+        </ul>
+        <form method="POST" class="text-left">
+            {% csrf_token %}
+            <input type="submit" id="submit-button" class="btn btn-success" value="Start">
+        </form>
+    </div>
+</div>
+{% endblock %}

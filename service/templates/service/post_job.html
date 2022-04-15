@@ -1,0 +1,272 @@
+{% extends 'homepage/header.html' %}
+{% load static %}
+{% block content %}
+<style>
+    .post-a-job {
+        padding: 120px 0;
+    }
+
+    #submit-button {
+        width: 100px;
+    }
+
+    .post-sec-card {
+        background-color: #fff;
+        border: 0.5px solid rgba(0, 0, 0, .5);
+        padding: 10px;
+        margin: 10px;
+        width: 100%;
+    }
+
+    .card .card-body p {
+        font-size: 1.5rem;
+    }
+</style>
+<div class="post-a-job">
+    <div class="container">
+        {% if messages %}
+        {% for message in messages %}
+        <div class="alert alert-{{ message.tags }}">
+            {{ message }}
+        </div>
+        {% endfor %}
+        {% endif %}
+        <h2>Post a Job</h2>
+        <form method="POST" onsubmit="return validateJobPost();">
+            <!-- Token block needed for added security -->
+            {% csrf_token %}
+            <div class="card post-sec-card">
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-sm-6">
+                            <p class="card-titles">Choose Services:</p>
+                            {{ form.client }}
+                            <div class="form-group">
+                                {{ form.captions.label }}
+                                <br>
+                                <small>If this box is checked, managers will write captions for content you provide them.</small>
+                                {{ form.captions }}
+                            </div>
+                            <div class="form-group">
+                                {{ form.search_for_content.label }}
+                                <br>
+                                <small>If this box is checked, managers will look for content relevant to your business</small>
+                                {{ form.search_for_content }}
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <p class="card-titles">Job Details</p>
+
+                            <div class="form-group">
+                                {{ form.length.label }}
+                                <br>
+                                <small>Select the amount of time you want them to provide these services</small>
+                                {{ form.length }}
+                            </div>
+                            <div class="form-group">
+                                {{ form.number_of_post.label }} (for each platform)
+                                <br>
+                                <small>If this box is checked, managers will write captions for content you provide them.</small>
+                                {{ form.number_of_post }}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                {{ form.service_description.label }}
+                                <ul>
+                                    <li>Describe the growth you expect to get from this job</li>
+                                    <li>List any preferred times you want content to be posted</li>
+                                    <li>Write as many resources as you can for managers to find or create content(Ex: Business Website, Articles, Previous).</li>
+                                    <li>Give guidelines on what exactly to post and please be as specific as possible</li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        {{ form.post_for_you.label }}
+                                        <br>
+                                        <small>Check this off if you want the managers to post for you. If not they will message you content</small>
+                                        {{ form.post_for_you }}
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        {{ form.engagement.label }}
+                                        <br>
+                                        <small>Check this off if you want managers to use your accounts to interact on social media through likes, follows, etc.</small>
+                                        {{ form.engagement }}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        {{ form.service_description }}
+                    </div>
+                </div>
+            </div>
+            <div class="card post-sec-card">
+                <div class="card-body">
+                    <p class="card-titles">Choose Platforms:</p>
+                    <div class="row">
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                {{ form.instagram.label }}
+                                {{ form.instagram }}
+                            </div>
+                            <div class="form-group">
+                                {{ form.facebook.label }}
+                                {{ form.facebook }}
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                {{ form.instagram_username.label }}
+                                {{ form.instagram_username }}
+                            </div>
+                            <div class="form-group">
+                                {{ form.facebook_username.label }}
+                                {{ form.facebook_username }}
+                            </div>
+                        </div>
+                    </div>
+                    <p class="card-titles" id="price-tag">Price: <span id="price-text"></span></p>
+                </div>
+            </div>
+            <input id="submit-button" type="submit" class="btn btn-primary" value="Post">
+        </form>
+    </div>
+</div>
+<script>
+    // changing input on load for arguments
+    (function () {
+    {% if request.GET.length %}
+    document.getElementById('id_length').value = {{ request.GET.length }}
+    {% endif %}
+    {% if request.GET.post_per_day %}
+    document.getElementById('id_number_of_post').value = {{ request.GET.post_per_day }}
+    {% endif %}
+    {% if request.GET.captions %}
+    document.getElementById('id_captions').checked = {{ request.GET.captions }}
+    {% endif %}
+    {% if request.GET.search_for_content %}
+    document.getElementById('id_search_for_content').checked = {{ request.GET.search_for_content }}
+    {% endif %}
+    {% if request.GET.instagram %}
+    document.getElementById('id_instagram').checked = {{ request.GET.instagram }}
+    {% endif %}
+    {% if request.GET.facebook %}
+    document.getElementById('id_facebook').checked = {{ request.GET.facebook }}
+    {% endif %}
+    {% if request.GET.post_for_you %}
+    document.getElementById('id_post_for_you').checked = {{ request.GET.post_for_you }}
+    {% endif %}
+    {% if request.GET.engagement %}
+    document.getElementById('id_engagement').checked = {{ request.GET.engagement }}
+    {% endif %}
+    // Getting data
+    let instagramItem = document.getElementById('id_instagram')
+    let facebookItem = document.getElementById('id_facebook')
+
+    // Running check func to see if checkboxes are selected onload
+    checkPlatformInstagram(instagramItem)
+    checkPlatformFacebook(facebookItem)
+
+    }) ();
+    function checkPlatformInstagram(e) {
+        let result = e.checked
+        instagramUsernameTextbox = document.getElementById('id_instagram_username')
+        if (result == true) {
+            instagramUsernameTextbox.removeAttribute('readonly')
+            instagramUsernameTextbox.setAttribute('placeholder', 'Enter')
+        } else {
+            instagramUsernameTextbox.setAttribute('readonly', 'readonly')
+            instagramUsernameTextbox.removeAttribute('placeholder')
+            instagramUsernameTextbox.value = ''
+        }
+    }
+    function checkPlatformFacebook(e) {
+        let result = e.checked
+        facebookUsernameTextbox = document.getElementById('id_facebook_username')
+        if (result == true) {
+            facebookUsernameTextbox.removeAttribute('readonly')
+            facebookUsernameTextbox.setAttribute('placeholder', 'Enter')
+        } else {
+            facebookUsernameTextbox.setAttribute('readonly', 'readonly')
+            facebookUsernameTextbox.removeAttribute('placeholder')
+            facebookUsernameTextbox.value = ''
+        }
+    }
+    function getPriceTag() {
+        // Getting price tag
+        let priceTag = document.getElementById('price-tag')
+        
+        // Getting other elements
+        let instagramItem = document.getElementById('id_instagram').checked
+        let facebookItem = document.getElementById('id_facebook') .checked
+        let platforms = 0
+        if(instagramItem == true){
+            platforms = platforms + 1
+        }
+        if (facebookItem == true) {
+            platforms = platforms + 1
+        }
+        platforms = platforms * 0.375
+        console.log("platforms: "+platforms)
+
+        let captions = document.getElementById('id_captions').checked
+        let findContent = document.getElementById('id_search_for_content').checked
+        let services = 0
+        
+        if (captions == true) {
+            services = services + 1
+        }
+        if (findContent == true) {
+            services = services + 1
+        }
+        serviceCost = services*0.5
+        console.log("services: "+ serviceCost)
+        let postPerDay = document.getElementById('id_number_of_post').value
+        postPerDay = postPerDay * 0.375
+        console.log("post per day: "+ postPerDay)
+
+        perDayBaseCost = serviceCost+ platforms+ postPerDay
+        console.log("per day base cost: "+ perDayBaseCost)
+        jobLength = document.getElementById('id_length').value
+        console.log("length: " + jobLength)
+        totalBaseCost = perDayBaseCost * jobLength
+        console.log("total base cost: " + totalBaseCost)
+        let managerPosts = document.getElementById('id_post_for_you').checked
+        if(managerPosts == true){
+            managerPosts = 5
+        } else {
+            managerPosts = 0
+        }
+        console.log("manager posting cost: "+ managerPosts)
+        let engagement = document.getElementById('id_engagement').checked
+        if (engagement == true) {
+            engagement = 2
+        } else {
+            engagement = 0
+        } 
+        console.log("engagement cost: "+ engagement)
+        totalCost = totalBaseCost+ engagement+ managerPosts
+        iblinkcoCount = (totalCost * 0.1) + 2
+        console.log("iblinkco: "+ iblinkcoCount)
+        console.log("baseTotalCost: "+ totalCost)
+        totalCost = totalCost + iblinkcoCount
+        stripe = (totalCost*0.029) + 0.3 
+        console.log("stripe: " + stripe)
+        totalCost = totalCost + stripe
+        totalCost = Math.max(Math.round(totalCost * 10) / 10, 2.8).toFixed(2);
+        console.log("Total Cost: "+ totalCost)
+        console.log("\n\n")
+        document.getElementById('price-text').innerHTML = "$"+totalCost
+    }
+    getPriceTag()
+</script>
+{% endblock %}

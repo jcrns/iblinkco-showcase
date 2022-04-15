@@ -1,0 +1,100 @@
+{% extends 'homepage/header.html' %}
+{% load static %}
+{% block content %}
+<style>
+    .complete-profile {
+        padding: 120px 0;
+    }
+
+    #submit-button {
+        width: 100px;
+        color: #fff;
+    }
+    input[type=submit] {
+        width: 175px;
+        color: grey;
+        /* text-decoration: none; */
+    }
+    input[type=submit]:hover {
+        /* color: grey; */
+        text-decoration: none;
+    }
+</style>
+<div class="container complete-profile">
+    {% if messages %}
+    {% for message in messages %}
+    <div class="alert alert-{{ message.tags }}">
+        {{ message }}
+    </div>
+    {% endfor %}
+    {% endif %}
+    <h2>Complete Profile</h2>
+    <small>Note: This data will be shown to clients you work with in the future. This can be changed later.</small>
+    <form method="POST" action="{% url 'users-confirm-user-type' %}">
+        <!-- Token block needed for added security -->
+        {% csrf_token %}
+        <input type="hidden" value="True" name="if-manager-or-client">
+        <div class="row">
+            <input id="i-am-client-button" class="btn btn-link" type="submit" value="I'm not a manager">
+        </div>
+    </form>
+    <div class="card card-warning">
+        <!-- /.card-header -->
+        <div class="card-body">
+            <form method="POST" enctype='multipart/form-data'>
+                {% csrf_token %}
+                <div class="row">
+                    <div class="col-sm-6">
+                        <div class="form-group">
+                            {{ form.first_name.label }}
+                            {{ form.first_name }}
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="form-group">
+                            {{ form.last_name.label }}
+                            {{ form.last_name }}
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-12">
+                        <!-- textarea -->
+                        <div class="form-group">
+                            {{ form.description.label }}
+                            <br>
+                            <small>Why do you do social media management? What do you specialize in on social media? Tell your clients about
+                                yourself!</small>
+                            {{ form.description }}
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-9">
+                        <div class="form-group">
+                            {{ form.date_of_birth.label }}
+                            {{ form.date_of_birth }}
+                        </div>
+                    </div>
+                    <div class="col-sm-3">
+                        <div class="form-group">
+                            {{ form.language.label }}
+                            {{ form.language }}
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-12">
+                        <!-- textarea -->
+                        <div class="form-group">
+                            Profile {{ form.image.label }}
+                            {{ form.image }}
+                        </div>
+                    </div>
+                </div>
+                <input id="submit-button" type="submit" class="btn btn-primary" value="Continue">
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

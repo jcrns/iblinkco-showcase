@@ -1,0 +1,30 @@
+{% autoescape off %}
+Hi {{ user.username }},
+You have a job opportunity with {{ order.client }},
+Job Details:
+Services:
+{% if order.captions == True %}
+Create Captions
+{% endif %}
+{% if order.search_for_content == True %}
+Look for content
+{% endif %}
+{% if order.engagement %}
+Casual engagement needed
+{% endif %}
+Job Length: {{ order.length }} Days
+
+Platforms:
+{% if order.instagram == True %}
+Instagram 
+{% endif %}
+{% if order.facebook == True %}
+Facebook
+{% endif %}
+
+Accept Job:
+http://{{ domain }}{% url 'management-job-offer' uidb64=uid token=token %}?accepted=True
+
+Decline Job:
+http://{{ domain }}{% url 'management-job-offer' uidb64=uid token=token %}?accepted=False
+{% endautoescape %}

@@ -1,0 +1,382 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<!-- test -->
+
+<head>
+    <!-- Meta Data -->
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1">
+    <title>iBlinkco - Social Media Management Service</title>
+
+    <meta name="msapplication-TileColor" content="#FF8A00">
+    <meta name="theme-color" content="#FF8A00">
+
+    <!-- Dependency Styles -->
+    <link rel="stylesheet" href="{% static 'homepage/temp-static/dependencies/bootstrap/css/bootstrap.min.css' %}"
+        type="text/css">
+    <link rel="stylesheet" href="{% static 'homepage/temp-static/dependencies/fontawesome/css/all.min.css' %}"
+        type="text/css">
+    <link rel="stylesheet" href="{% static 'homepage/temp-static/dependencies/swiper/css/swiper.min.css' %}"
+        type="text/css">
+    <link rel="stylesheet" href="{% static 'homepage/temp-static/dependencies/wow/css/animate.css' %}" type="text/css">
+    <link rel="stylesheet" href="{% static 'homepage/temp-static/dependencies/magnific-popup/css/magnific-popup.css' %}"
+        type="text/css">
+    <link rel="stylesheet"
+        href="{% static 'homepage/temp-static/dependencies/components-elegant-icons/css/elegant-icons.min.css' %}"
+        type="text/css">
+    <link rel="stylesheet"
+        href="{% static 'homepage/temp-static/dependencies/simple-line-icons/css/simple-line-icons.css' %}"
+        type="text/css">
+
+    <!-- Site Stylesheet -->
+    <link rel="stylesheet" href="{% static 'homepage/temp-static/assets/css/app.css' %}" type="text/css">
+
+    <!-- Google Web Fonts -->
+    <link href="https://fonts.googleapis.com/css?family=Poppins:300,400,500,600,700,800" rel="stylesheet">
+
+    <!-- Custom styling -->
+    <link rel="stylesheet" href="{% static 'homepage/css/header.css' %}" type="text/css">
+
+    <!-- Icon -->
+    <link rel="shortcut icon" href="{% static 'homepage/img/icon.ico' %}" type="image/x-icon">
+
+    <!-- Jquery -->
+    <script src="https://code.jquery.com/jquery-3.4.0.js"
+        integrity="sha256-DYZMCC8HTC+QDr5QNaIcfR7VSPtcISykd+6eSmBW5qo=" crossorigin="anonymous"></script>
+
+    <!-- Sortable.js -->
+    <script src="https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js"></script>
+    
+</head>
+
+<body data-style="default">
+    <style>
+        .modal-dialog {
+            position: absolute;
+            top: 10vh;
+            right: 0;
+            bottom: 0;
+            left: 0;
+            z-index: 10040;
+            overflow: auto;
+            overflow-y: auto;
+        }
+
+        {% if nav_black_link == True %}
+        .site-header .site-main-menu li > a{
+            color: #888888;
+        }
+        header {
+            border-bottom: 0.3px solid rgb(200, 200, 200);
+            background-color: #fff;
+        }
+        .toggle-menu .bar {
+            background: #000;
+        }
+        {% endif %}
+
+
+        .nav-btn:hover {
+            color: #FF8A00
+        }
+
+        .link-btn:hover {
+            color: #FF8A00
+        }
+
+        #form-sign-up {
+            overflow: scroll;
+        }
+    </style>
+    <div class="page-loader">
+        <div class="loader">
+            <!-- Loader -->
+            <div class="blobs">
+                <div class="blob-center"></div>
+                <div class="blob"></div>
+                <div class="blob"></div>
+                <div class="blob"></div>
+                <div class="blob"></div>
+                <div class="blob"></div>
+                <div class="blob"></div>
+            </div>
+            <svg xmlns="http://www.w3.org/2000/svg" version="1.1">
+                <defs>
+                    <filter id="goo">
+                        <feGaussianBlur in="SourceGraphic" stdDeviation="10" result="blur" />
+                        <feColorMatrix in="blur" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 18 -7" result="goo" />
+                        <feBlend in="SourceGraphic" in2="goo" />
+                    </filter>
+                </defs>
+            </svg>
+
+        </div>
+    </div><!-- /.page-loader -->
+
+    <div id="main_content">
+
+
+        <!--=========================-->
+        <!--=        Navbar         =-->
+        <!--=========================-->
+        <header class="site-header header_trans-fixed" data-top="992">
+            <div class="container">
+                <div class="header-inner">
+                    <div class="toggle-menu">
+                        <span class="bar"></span>
+                        <span class="bar"></span>
+                        <span class="bar"></span>
+                    </div>
+                    <!-- /.toggle-menu -->
+
+                    <div class="site-mobile-logo">
+                        <a href="{% url 'homepage-home' %}" class="logo">
+                            {% if  request.path == '/' %}
+                            <img src="{% static 'homepage/img/headerlogowebsite-mobile-2.png' %}" alt="site logo"
+                                class="main-logo">
+                            {% else %}
+                            <img src="{% static 'homepage/img/headerlogowebsite-mobile.png' %}" alt="site logo"
+                                class="main-logo">
+                            {% endif %}
+
+                        </a>
+                    </div>
+
+                    <nav class="site-nav">
+                        <div class="close-menu">
+                            <span>Close</span>
+                            <i class="ei ei-icon_close"></i>
+                        </div>
+
+                        <div class="site-logo">
+                            <a href="{% url 'homepage-home' %}" class="logo">
+                                {% if request.path == '/' %}
+                                <img src="{% static 'homepage/img/headerlogowebsite-mobile-2.png' %}" alt="site logo"
+                                    class="main-logo">
+                                {% else %}
+                                <img src="{% static 'homepage/img/headerlogowebsite-mobile.png' %}" alt="site logo"
+                                    class="main-logo">
+                                {% endif %}
+                                <img src="{% static 'homepage/img/headerlogowebsite-mobile.png' %}" alt="site logo"
+                                    class="sticky-logo">
+                            </a>
+                        </div>
+                        <!-- /.site-logo -->
+
+                        <div class="menu-wrapper" data-top="992">
+                            <ul class="site-main-menu">
+                                <li><a href="{% url 'blog-home' %}">Blog</a></li>
+                                {% if user.profile.is_client %}
+                                <li><a href="{% url 'service-job' %}">Post a Job</a></li>
+                                {% else %}
+                                <li><a href="{% url 'homepage-become-a-manager' %}">Become a Manager</a></li>
+                                {% endif %}
+                                {% if user.is_authenticated %}
+                                <li><a href="{% url 'users-logout' %}">Logout</a></li>
+                                <li><a id="username-link" href="{% url 'homepage-overview' %}" class="">Go to Dashboard</a></li>
+                                {% else %}
+                                <li><a class="float-right" href="#" data-toggle="modal"
+                                        data-target="#login-modal">Login</a></li>
+                                {% endif %}
+                            </ul>
+
+                            <div class="nav-right">
+                                {% if not user.is_authenticated %}
+                                <a href="signup.html" class="nav-btn" data-toggle="modal"
+                                    data-target="#signup-modal">Sign Up</a>
+                                {% endif %}
+                            </div>
+                        </div>
+                        <!-- /.menu-wrapper -->
+
+                    </nav><!-- /.site-nav -->
+                </div><!-- /.header-inner -->
+            </div><!-- /.container -->
+        </header><!-- /.site-header -->
+
+        {% block content %}
+        {% endblock %}
+
+        <!--=========================-->
+        <!--=        Footer         =-->
+        <!--=========================-->
+        <footer id="footer">
+            <div class="container">
+                <div class="footer-inner wow pixFadeUp">
+                    <div class="row">
+                        <div class="col-lg-4 col-md-4">
+                            <div class="widget footer-widget">
+                                <h3 class="widget-title">About</h3>
+
+                                <ul class="footer-menu">
+                                    <li><a href="{% url 'homepage-privacy-policy' %}">Privacy Policy</a></li>
+                                    <li><a href="{% url 'homepage-terms-and-conditions' %}">Terms and Conditions</a></li>
+                                    <li><a href="{% url 'homepage-refund-policy' %}">Refunds</a></li>
+                                    <li><a href="{% url 'homepage-connect-socials' %}">Share Social Accounts</a></li>
+                                </ul>
+                            </div>
+                            <!-- /.widget footer-widget -->
+                        </div>
+                        <!-- /.col-lg-3 col-md-6 -->
+
+                        <div class="col-lg-4 col-md-4">
+                            <div class="widget footer-widget">
+                                <h3 class="widget-title">Community</h3>
+
+                                <ul class="footer-menu">
+                                    <li><a href="#">Blog</a></li>
+                                    <li><a href="#">FAQs</a></li>
+                                    <li><a href="#">Manager Guide</a></li>
+                                    <li><a href="#">Become a Manager</a></li>
+                                </ul>
+                            </div>
+                            <!-- /.widget footer-widget -->
+                        </div>
+                        <!-- /.col-lg-3 col-md-6 -->
+
+                        <div class="col-lg-4 col-md-4">
+                            <div class="widget footer-widget">
+                                <h3 class="widget-title">Contact Us</h3>
+                                <ul class="footer-menu">
+                                    <li><a href="#">Help & Support</a></li>
+                                    <li>Our PO Box: 99656 Emeryville CA</li>
+                                </ul>
+                                <ul class="footer-social-link">
+                                    <li><a href="#"><i class="fab fa-facebook-f"></i></a></li>
+                                    <li><a href="#"><i class="fab fa-twitter"></i></a></li>
+                                    <li><a href="https://instagram.com/iblinkco.tech" target="_blank"><i
+                                                class="fab fa-instagram"></i></a></li>
+                                    <li><a href="#"><i class="fab fa-linkedin-in"></i></a></li>
+                                </ul>
+                            </div>
+                            <!-- /.widget footer-widget -->
+                        </div>
+                        <!-- /.col-lg-3 col-md-6 -->
+                    </div>
+                    <!-- /.row -->
+
+                </div><!-- /.footer-inner -->
+
+                <div class="site-info">
+                    <div class="copyright">
+                        <p>iBlinkco, Copyright © 2020</a></p>
+                    </div>
+                </div><!-- /.site-info -->
+            </div><!-- /.container -->
+        </footer><!-- /#footer -->
+    </div>
+    {% if not user.is_authenticated %}
+    <div class="modal fade" id="login-modal" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Login</h5>
+                </div>
+                <div class="modal-body">
+                    {% include "users/login.html" %}
+                    <div class="row text-center">
+                        <div class="col-md-6">
+                            <a href="{{ request.path }}?signup=true">Not a member yet? Sign Up</a>
+                        </div>
+                        <div class="col-md-6 text-center">
+                            <a href="{{ request.path }}?forgot_password=true" class="text-right">Forgot Password</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="signup-modal" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Sign Up</h5>
+                </div>
+                <div class="modal-body" id="form-sign-up" style="overflow:scroll; height:400px;">
+                    {% include "users/signup.html" %}
+                    <a href="{{ request.path }}?login=true">Already a member? Login now</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="forgot-password-modal" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Forgot Password</h5>
+                </div>
+                <div class="modal-body">
+                    {% include "users/forgot_password.html" %}
+                    <div class="row text-center">
+                        <div class="col-md-6">
+                            <a href="{{ request.path }}?login=true">Go back to login</a>
+                        </div>
+                        <div class="col-md-6 text-center">
+                            <a href="{{ request.path }}?signup=true" class="text-right">Go back to signup</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+    <!-- Dependency Scripts -->
+    <script src="{% static 'homepage/temp-static/dependencies/popper.js/popper.min.js' %}"></script>
+    <script src="{% static 'homepage/temp-static/dependencies/jquery/jquery.min.js' %}"></script>
+    <script src="{% static 'homepage/temp-static/dependencies/bootstrap/js/bootstrap.min.js' %}"></script>
+    <script src="{% static 'homepage/temp-static/dependencies/swiper/js/swiper.min.js' %}"></script>
+    <script src="{% static 'homepage/temp-static/dependencies/jquery.appear/jquery.appear.js' %}"></script>
+    <script src="{% static 'homepage/temp-static/dependencies/wow/js/wow.min.js' %}"></script>
+    <script src="{% static 'homepage/temp-static/dependencies/countUp.js/countUp.min.js' %}"></script>
+    <script src="{% static 'homepage/temp-static/dependencies/isotope-layout/isotope.pkgd.min.js' %}"></script>
+    <script src="{% static 'homepage/temp-static/dependencies/imagesloaded/imagesloaded.pkgd.min.js' %}"></script>
+    <script
+        src="{% static 'homepage/temp-static/dependencies/jquery.parallax-scroll/js/jquery.parallax-scroll.js' %}"></script>
+    <script
+        src="{% static 'homepage/temp-static/dependencies/magnific-popup/js/jquery.magnific-popup.min.js' %}"></script>
+    <script src="{% static 'homepage/temp-static/dependencies/gmap3/js/gmap3.min.js' %}"></script>
+    <script type='text/javascript'
+        src='https://maps.googleapis.com/maps/api/js?key=AIzaSyDk2HrmqE4sWSei0XdKGbOMOHN3Mm2Bf-M&#038;ver=2.1.6'></script>
+
+    <!-- Site Scripts -->
+    {% if static_header %}
+    <script src="{% static 'homepage/temp-static/assets/js/header2.js' %}"></script>
+    {% else %}
+    <script src="{% static 'homepage/temp-static/assets/js/header.js' %}"></script>
+    {% endif %}
+    <script src="{% static 'homepage/temp-static/assets/js/app.js' %}"></script>
+    
+    {% if request.GET.login == 'true' %}
+        {% if not user.is_authenticated  %}
+        <script>
+            $(window).on('load', function () {
+                $('#login-modal').modal('show');
+            });
+        </script>
+        {% endif %}
+    {% endif %}
+    {% if request.GET.signup == 'true' %}
+        {% if not user.is_authenticated  %}
+        <script>
+            $(window).on('load', function () {
+                $('#signup-modal').modal('show');
+            });
+        </script>
+        {% endif %}
+    {% endif %}
+    {% if request.GET.forgot_password == 'true' %}
+        {% if not user.is_authenticated  %}
+        <script>
+            $(window).on('load', function () {
+                $('#forgot-password-modal').modal('show');
+            });
+        </script>
+        {% endif %}
+    {% endif %}
+</body>
+
+</html>

@@ -1,0 +1,300 @@
+{% extends 'homepage/header.html' %}
+{% load static %}
+{% block content %}
+<style>
+    .client {
+        padding: 130px 0;
+        background-color: #F5F5F5;
+        width: 100%;
+    }
+
+    .dashboard-card {
+        background-color: #fff;
+        border: 0.5px solid rgba(0, 0, 0, .125);
+        width: 100%;
+        padding: 10px;
+        margin: 10px;
+    }
+
+    .bottom-link {
+        width: 30px;
+        height: 30px;
+        position: absolute;
+        bottom: 1px;
+        right: 5px;
+    }
+
+    #no-job {
+        padding-top: 50px;
+    }
+
+    .container-fluid h3 {
+        padding: 10px;
+    }
+
+
+    #past-orders {
+        position: relative;
+        overflow-y: auto;
+    }
+
+    #profile-row {
+        height: 100%;
+    }
+
+    #profile {
+        height: 100%;
+    }
+
+    #business-name {
+        padding: 10px;
+        color: #000;
+    }
+
+    .modal-dialog {
+        position: absolute;
+        top: 20vh;
+        right: 0;
+        bottom: 0;
+        left: 0;
+        z-index: 10040;
+        overflow: auto;
+        overflow-y: auto;
+    }
+
+    .post-row {
+        cursor: pointer;
+    }
+
+    /* Current jobs */
+    #current-jobs .card-body p.h5 {
+        font-size: 1.35rem;
+    }
+
+    #current-jobs .card-body p.h2 {
+        font-size: 2rem;
+        color: #343a40;
+    }
+
+    #view-order-button {
+        min-width: 100px;
+        max-width: 200px;
+    }
+    .section-header {
+        color: #424242;
+    }
+    #new-message-count{
+        position: relative;
+        top: -15px;
+        left: -10px;
+        border-radius: 20px;
+        border: 4px solid red;
+        min-width: 20px;
+        width:100%;
+        height: 20px;
+        background-color: red;
+        font-size: 16px;
+        color: #fff;
+    }
+</style>
+<div class="client">
+    <div class="container-fluid">
+        {% if messages %}
+        {% for message in messages %}
+        <div class="alert alert-{{ message.tags }}">
+            {{ message }}
+        </div>
+        {% endfor %}
+        {% endif %}
+        <h3 class="m-0 text-dark">Dashboard</h3>
+        <div class="row">
+            <div class="col-md-6 d-flex align-items-stretch">
+                <div class="card dashboard-card" id="current-jobs">
+                    <div class="card-body">
+                        <h5 class="card-title section-header">
+                            {% if current_job %}
+                            {% for job in current_job %}
+                            {% if job.manager %}
+                            Current Job
+                            {% else %}
+                            Posted Job
+                            {% endif %}
+                            {% endfor %}
+                            {% else %}
+                            Current Job
+                            {% endif %}
+                        </h5>
+                        {% if current_job %}
+                        <div class="current-job text-center">
+                            {% for job in current_job %}
+                            {% if job.manager %}
+                            <p class="h5">{{ job.manager }}</p>
+                            {% else %}
+                            <p class="h5">Job not assigned yet</p>
+                            {% endif %}
+
+                            <p class="h2">
+                                {% if job.captions == True %}
+                                Create Captions
+                                {% endif %}
+                                {% if job.captions == True and job.search_for_content == True %}
+                                and
+                                {% endif %}
+                                {% if job.search_for_content == True %}
+                                Look for content
+                                {% endif %}
+                            </p>
+                            <p class="h6">For
+                                {% if job.facebook == True %}
+                                {{ job.facebook_username }} (Facebook)
+                                {% endif %}
+                                {% if job.facebook == True and job.instagram == True %}
+                                and
+                                {% endif %}
+                                {% if job.instagram == True %}
+                                {{ job.instagram_username }} (Instagram)
+                                {% endif %}
+                            </p>
+                            {% if job.paid_for is not True %}
+                            {% if job.manager %}
+                                <a href="{% url 'dashboard-confirm-job' job.id %}" id="view-order-button"
+                                    class="btn btn-primary">Pay</a>
+                            {% else %}
+                                <a href="{% url 'dashboard-confirm-job' job.id %}" id="view-order-button" class="btn btn-primary">View Order</a>
+                            {% endif %}
+                            {% else %}
+                            <a href="{% url 'dashboard-job-detail-client' job.id %}" class="btn btn-success" id="details-btn"><span id="details-btn-text">Details</span></a>
+                            {% if unread_client > 0 %}
+                            <span id="new-message-count">{{ unread_client }}</span>
+                            {% endif %}
+                            {% endif %}
+                            {% endfor %}
+                        </div>
+                        {% else %}
+                        <div id="no-job" class="text-center">
+                            <h3 class="text-secondary">No jobs available</h3>
+                            <a href="{% url 'service-job-select' %}" class="btn btn-primary">Post a Job</a>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6 card d-flex align-items-stretch">
+                <div class="card dashboard-card" id="profile">
+                    <div class="card-body">
+                        <div class="row" id="profile-row">
+                            <div class="col-3 text-center">
+                                <img id="profile-pic" class="img-fluid float-center" src="{{ user.profile.image.url }}"
+                                    alt="">
+                                <p id="business-name" class="font-weight-bold">{{ user.profile.business_name }}</p>
+                                <p id="business-type" class="font-weight-bold">{{ user.profile.business_type }}</p>
+                            </div>
+                            <div id="profile-description-div" class="col-9 text-right">
+                                <h5 class="section-header">{{ user.email }}</h5>
+                                <p>{{ user.profile.description }}</p>
+                                <p id="profile-language" class="text-weight-bold">Language: {{ user.profile.language }}
+                                </p>
+                                <a href="#" data-toggle="modal" data-target="#update-profile"><img class="bottom-link"
+                                        src="{% static 'homepage/img/edit-icon.png' %}" alt=""></a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-6 d-flex align-items-stretch">
+                <div class="card dashboard-card" id="past-orders">
+                    <div class="card-body">
+                        <h5 class="card-title section-header">Past Orders</h5>
+                        <div class="card-body table-responsive p-0">
+                            <table class="table table-striped table-valign-middle">
+                                <thead>
+                                    <tr>
+                                        <th>Services</th>
+                                        <th>Price</th>
+                                        <th>Manager</th>
+                                        <th>Length</th>
+                                        <th>Deadline</th>
+                                        <th>More</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for order in past_orders %}
+                                    <tr class="post-row" onclick='window.location="job-details-client/{{ order.id  }}";'>
+                                        <td>
+                                            {% if order.captions == True %}
+                                            Created Captions
+                                            {% endif %}
+                                            {% if order.captions == True and order.search_for_content == True %}
+                                            ,
+                                            {% endif %}
+                                            {% if order.search_for_content == True %}
+                                            Looked for content
+                                            {% endif %}
+
+                                        </td>
+                                        <td>
+                                            ${{ order.price_paid }} USD
+                                        </td>
+                                        <td>
+                                            {{ order.manager }}
+                                        </td>
+                                        <td>
+                                            {{ order.length }} Days
+                                        </td>
+                                        <td>{{ order.deadline|date:"M d, Y" }}</td>
+                                        <td>
+                                            <a href="{% url 'dashboard-job-detail-client' order.id %}"><img
+                                                    src="{% static 'homepage/img/expand-icon.png' %}" alt=""></a>
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6 card d-flex align-items-stretch">
+                <div class="card dashboard-card" id="profile">
+                    <div class="card-body">
+                        <h5 class="card-title section-header">Social Media Analytics tool</h5>
+                        <h6 class="card-subtitle mb-2 text-muted">Connect your social media accounts and recieve instant
+                            feedback</h6>
+                        <div class="row justify-content-between">
+                            <div class="col-6">
+                                The original iBlinkco Dashboard gives you tips to help maximize your presence on social
+                                media, shows your competition in your
+                                area as a business, and we give you data on your followers.
+                            </div>
+                            <div class="col-3 text-center">
+                                <img src="{% static 'homepage/img/old-platform-icon.png' %}">
+                                <p class="text-center"><a class="btn btn-outline-primary" target="_blank"
+                                        href="https://www.iblinkco.com/#">Start Now</a></p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="update-profile" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Update Profile</h5>
+            </div>
+            <div class="modal-body" id="form-sign-up" style="overflow:scroll; height:400px;">
+                <form method="POST" enctype='multipart/form-data'>
+                    <!-- Token block needed for added security -->
+                    {% csrf_token %}
+                    {{ update_profile_form }}
+                    <input id="submit-button" type="submit" class="btn btn-primary" value="Continue">
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

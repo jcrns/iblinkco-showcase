@@ -1,0 +1,184 @@
+{% extends 'homepage/header.html' %}
+{% load static %}
+{% block content %}
+<style>
+    .job {
+        padding: 130px 0;
+        background-color: #F5F5F5;
+        width: 100%;
+    }
+
+    .job-card {
+        background-color: #fff;
+        border: 0.5px solid rgba(0, 0, 0, .125);
+        margin-bottom: 10px;
+        width: 100%;
+        padding: 10px;
+        margin: 10px;
+        min-height: 300px;
+    }
+
+    .bottom-link {
+        margin-top: 5px;
+        width: 30px;
+        height: 30px;
+    }
+
+    #milestone-bar {
+        height: 20px;
+    }
+
+    .detail-btn {
+        width: 200px;
+    }
+
+    #instagram-pic {
+        width: 40px;
+        height: 40px;
+    }
+
+    #facebook-pic {
+        width: 60px;
+        height: 35px;
+    }
+
+    #without-manager {
+        margin-top: 60px;
+    }
+
+    .card .card-body p {
+        font-size: 30px;
+        margin-bottom: 1rem;
+    }
+
+    #submit-button {
+        width: 100px;
+    }
+
+    .card-title-bold {
+        color: rgba(0, 0, 0, .925);
+    }
+
+    #browse-link {
+        color: rgba(0, 0, 0, .8);
+    }
+
+    #browse-link:hover {
+        text-decoration: underline;
+    }
+
+    #browse-managers-btn {
+        margin: 20px;
+    }
+    #return-div {
+        padding-top: 70px;
+        padding-bottom: 100px;
+    }
+</style>
+<div class="job">
+    <div class="container-fluid">
+        <div class="col-md-12 d-flex align-items-stretch">
+            <div class="card job-card">
+                <div class="card-body text-center">
+                    {% if not order.manager %}
+                    <div id="return-div">
+                        <h2 class="text-secondary">We will notify you as soon as we assign a manager to this job</h2>
+                        <a href="{% url 'dashboard-home' %}" class='h3'>Return to Dashbaord</a>
+                    </div>
+                    {% endif %}
+                    <h2><u>Job Order</u></h2>
+                    <p class="h5">
+                        <span class="card-title-bold">Manager: </span>
+                        {{ order.manager }}
+                    </p>
+                    <p class="h5">
+                        <span class="card-title-bold">Price: </span>
+                        ${{ order.price_paid }}
+                    </p>
+                    <p class="h5">
+                        <span class="card-title-bold">Services:</span>
+                        {% if order.captions == True %}
+                        Created Captions
+                        {% endif %}
+                        {% if order.captions == True and order.search_for_content == True %}
+                        ,
+                        {% endif %}
+                        {% if order.search_for_content == True %}
+                        Looked for content
+                        {% endif %}
+                    </p>
+                    <p class="h5">
+                        <span class="card-title-bold">Duration:</span> {{ order.length }} Days
+                    </p>
+                    <p class="h5">
+                        <span class="card-title-bold">Number Of Post:</span> {{ order.number_of_post }}
+                    </p>
+                    <p class="h5">
+                        <span class="card-title-bold">Platforms:</span>
+                        {% if order.instagram == True %}
+                        <img id="instagram-pic" src="{% static 'homepage/img/instagram.png' %}">
+                        {% endif %}
+                        {% if order.instagram == True and order.facebook == True%}
+                        ,
+                        {% endif %}
+                        {% if order.facebook == True %}
+                        <img id="facebook-pic" src="{% static 'homepage/img/facebook.png' %}">
+                        {% endif %}
+                    </p>
+                    <p class="h5">
+                        <span class="card-title-bold">Manager Selection:</span> Random
+                    </p>
+
+                    {% if order.paid_for == False %}
+                        <small>Job will start when client pays for job</small>
+                    {% endif %}
+
+                    {% if not order.manager %}
+                    <!--<a href="#" id="browse-managers-btn" class="btn btn-outline-success" data-toggle="modal"
+                        data-target="#browse-modal">Browse for Managers</a>-->
+                    {% endif %}
+                    <div>
+                        <br>
+                        <a href="#" class="detail-btn btn btn-outline-danger" data-toggle="modal"
+                            data-target="#cancel-modal">Cancel</a>
+                        {% if order.manager %}
+                            {% if user.profile.is_client == True %}
+                            <a href="{% url 'service-checkout' order.job_id %}"
+                                class="detail-btn btn btn-outline-primary">Pay</a>
+                            {% endif %}
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="browse-modal" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-body">
+                <div class="text-center">
+                    <h3>Are you sure you want to browse managers?</h3>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="cancel-modal" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-body">
+                <div class="text-center">
+                    <h3>Are you sure you want to cancel the job</h3>
+                    {% if order.manager %}
+                    <p>We will charge extra depending on how far you have made it through the job</p>
+                    {% else %}
+                    <p>We won't charge because you haven't been paired with a manager yet</p>
+                    {% endif %}
+                    <a href="{% url 'dashboard-job-delete' order.id %}" class="btn btn-danger">Cancel Now</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

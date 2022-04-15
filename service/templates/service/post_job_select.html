@@ -1,0 +1,89 @@
+{% extends 'homepage/header.html' %}
+{% load static %}
+{% block content %}
+<style>
+    .post-a-job-select {
+        padding: 120px 0;
+    }
+
+    .recommend-cards {
+        background-color: #fff;
+        border: 0.5px solid rgba(0, 0, 0, .5);
+        padding: 10px;
+        margin: 10px;
+        width: 100%;
+    }
+    #custom-job-text {
+        font-size:1.75rem ;
+    }
+</style>
+<div class="post-a-job-select">
+    <div class="container-fluid">
+        <h2>Recommended Jobs</h2>
+        <div class="row justify-content-center">
+            <div class="col-lg-4 d-flex align-items-stretch">
+                <div class="card recommend-cards">
+                    <h5 class="card-header">Option 1</h5>
+                    <div class="card-body">
+                        <p>Services:</p>
+                        <ul>
+                            <li>Captions (including hashtags)</li>
+                            <li>Finding relevant content</li>
+                            <li>Manager will post for you</li>
+                            <li>Engagement on account</li>
+                        </ul>
+                        <p>Length: 5 Days</p>
+                        <p>Post Per Day: 2</p>
+                        <p>Platforms: Instagram & Facebook</p>
+                        <p>Manager: Random</p>
+                        <a href="{% url 'service-job' %}?captions=true&search_for_content=true&length=5&post_per_day=2&instagram=true&facebook=true&post_for_you=true&engagement=true" class="btn btn-outline-primary" value="Post Job">Post Job</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-4 d-flex align-items-stretch">
+                <div class="card recommend-cards">
+                    <h5 class="card-header">Option 2</h5>
+                    <div class="card-body">
+                        <p>Services:</p>
+                        <ul>
+                            <li>Captions (including hashtags)</li>
+                            <li>Finding relevant content</li>
+                            <li>Manager will post for you</li>
+                            <li>Engagement on account</li>
+                        </ul>
+                        <p>Length: 7 Days</p>
+                        <p>Post Per Day: 3</p>
+                        <p>Platforms: Instagram & Facebook</p>
+                        <p>Manager: Random</p>
+                        <a href="{% url 'service-job' %}?captions=true&search_for_content=true&length=7&post_per_day=3&instagram=true&facebook=true&post_for_you=true&engagement=true" class="btn btn-outline-primary" value="Post Job">Post Job</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-4 d-flex align-items-stretch">
+                <div class="card recommend-cards">
+                    <h5 class="card-header">Option 3</h5>
+                    <div class="card-body">
+                        <p>Services:</p>
+                        <ul>
+                            <li>Captions (including hashtags)</li>
+                            <li>Finding relevant content</li>
+                            <li>Manager will post for you</li>
+                            <li>Engagement on account</li>
+                        </ul>
+                        <p>Length: 10 Days</p>
+                        <p>Post Per Day: 3</p>
+                        <p>Platforms: Instagram & Facebook</p>
+                        <p>Manager: Random</p>
+                        <a href="{% url 'service-job' %}?captions=true&search_for_content=true&length=10&post_per_day=3&instagram=true&facebook=true&post_for_you=true&engagement=true" class="btn btn-outline-primary">Post Job</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <p class="h5">Want a custom job? <a href="{% url 'service-job' %}">Click Here</a></p>
+    </div>
+</div>
+<form method="POST">
+
+</form>
+</div>
+{% endblock %}

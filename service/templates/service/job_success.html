@@ -1,0 +1,21 @@
+{% extends 'homepage/header.html' %}
+{% load static %}
+{% block content %}
+<style>
+    .job-success {
+        padding-top: 200px;
+        padding-bottom: 120px;
+    }
+    #thank-you {
+        padding-bottom: 30px;
+    }
+    #get-back-to-you {
+        padding-bottom: 30px;
+    }
+</style>
+<div class="job-success text-center">
+    <h1 id="thank-you" class="display-2">Thank You For Posting</h1>
+    <h3 id="get-back-to-you">We will get back to you as soon as we find a compatible manager</h3>
+    <a href="{% url 'dashboard-home' %}" class="h3">Return To Dashboard</a>
+</div>
+{% endblock %}
