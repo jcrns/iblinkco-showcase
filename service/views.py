@@ -9,6 +9,8 @@ from users.forms import ProfileUpdateFormClient, ProfileUpdateFormManager
 # Importing job posting form
 from .forms import JobPostForm
 
+from .tasks import *
+
 # Importing job model
 from .models import JobPost, Milestone
 
@@ -31,7 +33,7 @@ import stripe
 import os
 
 # Importing celery task
-from service.tasks import manager_assignment, check_milestone_client_email, milestone_send_emails
+# from service.tasks import manager_assignment, check_milestone_client_email, milestone_send_emails
 from datetime import timedelta, datetime
 
 # Importing lib to get base site

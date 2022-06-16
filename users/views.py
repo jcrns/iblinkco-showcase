@@ -1,3 +1,5 @@
+from unicodedata import name
+import json
 from django.shortcuts import redirect, render
 
 from django.http import HttpResponseRedirect
@@ -13,6 +15,9 @@ from django.contrib import messages
 
 # Importing email functions
 from django.core.mail import EmailMessage
+
+# Importing email verification funcs
+from verify_email.email_handler import send_verification_email
 
 # Importing to handle Url
 from django.urls import reverse
@@ -35,8 +40,10 @@ from django.utils.encoding import force_bytes, force_text
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from webapp.tokens import token_generation
 
+from django.utils.timezone import localtime, timedelta
+
 # Importing local tasks
-from .tasks import userCreationOneDayCheckin
+from .tasks import *
 
 # Importing the datetime
 from datetime import timedelta, datetime
@@ -45,6 +52,9 @@ from django.contrib.auth import views as auth_views
 
 # Importing lib to hash password
 from django.contrib.auth.hashers import make_password
+
+from django_celery_beat.models import PeriodicTask, IntervalSchedule, CrontabSchedule
+
 # Registering new user
 def registerFunc(request):
     if request.method == 'POST':
@@ -52,6 +62,13 @@ def registerFunc(request):
         # Getting posted data in form
         form = UserRegisterForm(request.POST)
 
+
+        # Trying to validate form
+
+        try:
+            pass
+        except Exception as e:
+            print(e)
         # Checking if form is valid
         if form.is_valid():
             # Changing is active bool in database to false before committing
@@ -82,8 +99,11 @@ def registerFunc(request):
             # Sending email 
             email = EmailMessage(mail_subject,
                                  messageBody, to=[f'{email}'])
-            print(email)
-            # email.send()
+
+            # email = send_verification_email(request, form)
+
+            # print(email)
+            email.send()
             
             print('Verification email sent')
 
@@ -114,32 +134,53 @@ def registerFunc(request):
             url = request.POST.get("current-path")
             url = createUrl('login', url)
             return redirect(url)
-
     # Redirecting to signup screen
     url = createUrl('signup', 'homepage-home')
     return redirect(url)
 
 # Activate account function
 def activate(request, uidb64, token):
+    print("ACTIVATING")
     try:
         # Decoding encoded user id
         uid = force_text(urlsafe_base64_decode(uidb64))
 
         # Getting user
-        user = User.objects.get(pk=uid)
+        user = User.objects.filter(pk=uid).first()
+
     except(TypeError, ValueError, OverflowError, User.DoesNotExist):
         user = None
-    if user is not None and token_generation.check_token(user, token):
+    
+    print("user")
+    print(user)
+    print("uid")
+    print(uid)
+    print(token_generation.check_token(user, token))
 
+    if user is not None and token_generation.check_token(user, token):
+        print("Activating fully")
         # Changing value of 
         user.is_active = True
         user.save()
         login(request, user)
+        Profile.objects.create(user=user)
+
+        print("Applied 2")
+
+        # tomorrow = datetime.utcnow() + timedelta(days=1)
 
         # Scheduling oneday checkin email
-        userCreationOneDayCheckin.apply_async(
-            (uid,), eta=datetime.now() + timedelta(days=1))
+        # chon_schedule = CrontabSchedule.objects.create(minute='0', hour='18') # To create a cron schedule. 
+        # periodic_task = PeriodicTask.objects.create(crontab=chon_schedule, name='Follow up email after sign up',task='follow_up_email') # It creates a entry in the database describing that periodic task (With cron schedule).
+        userCreationOneDayCheckin(uid)
 
+        # periodic_task.enabled = False
+        # periodic_task.save()
+
+        # userCreationOneDayCheckin.apply_async((uid,), eta=tomorrow)
+
+        
+        print("Applied")
         # return redirect('home')
         messages.success(request, f'Thank you for your email confirmation. Now you can login your account.')
     else:
@@ -341,7 +382,7 @@ def comfirmUser(request):
             return redirect('service-complete-profile-manager')
 
         
-        return redirect('homepage-home')
+    return redirect('homepage-home')
 
 # Function to create url with paramaters
 def createUrl(state, url):

@@ -1,6 +1,6 @@
 # Importing celery
-from celery.task.schedules import crontab
-from celery.decorators import periodic_task
+from celery.schedules import crontab
+# from celery.decorators import periodic_task
 from celery import shared_task
 
 # Importing profile and jobpost manager for management assignment
@@ -17,7 +17,7 @@ import random
 from django.contrib.auth.models import User
 
 # Importing revoke to end future functions
-from celery.task.control import revoke
+# from celery.task.control import revoke
 
 # Manager job preperation ended email
 @shared_task

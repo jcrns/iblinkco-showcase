@@ -17,7 +17,6 @@ from django.contrib import admin
 from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
-from service.tasks import manager_assignment, check_milestone_client_email, milestone_send_emails
 
 
 urlpatterns = [
@@ -29,6 +28,8 @@ urlpatterns = [
     path('', include('dashboard.urls')),
     path('', include('service.urls')),
     path('', include('chat.urls')),
+    path('verification/', include('verify_email.urls')),
+    
 ]
 
 # Running manager assignment func on app load

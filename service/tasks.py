@@ -1,6 +1,7 @@
 # Importing celery
-from celery.task.schedules import crontab
-from celery.decorators import periodic_task
+from unicodedata import name
+from celery.schedules import crontab
+# from celery.decorators import periodic_task
 from celery import shared_task
 
 # Importing profile and jobpost manager for management assignment
@@ -19,11 +20,44 @@ from django.contrib.auth.models import User
 # Importing manager job email func
 from management.views import emailJobOffer
 
+from webapp.celery import app
+
+from django_celery_beat.models import PeriodicTask, IntervalSchedule, CrontabSchedule
+
 # Importing revoke to end future functions
-from celery.task.control import revoke
+# from celery.task.control import revoke
+
+# Trying to create schedule
+try:
+    taskName='Assigning Manager'
+    managerAssignmentTask = PeriodicTask.objects.filter(name=taskName)
+    print(managerAssignmentTask)
+
+    if not managerAssignmentTask:
+        print("Creating task " + taskName)
+        schedule, created = IntervalSchedule.objects.get_or_create(
+            every=30,
+            period=IntervalSchedule.MINUTES,
+        ) 
+        PeriodicTask.objects.create(
+            interval=schedule,                  # we created this above.
+            name=taskName,          # simply describes this periodic task.
+            task='service.manager_assignment',  # name of task.
+        )
+    else:
+        print("Already created")
+except Exception as e:
+    print("Failed to create schedule")
+    
+
+@shared_task()
+def add(x, y):
+    print("wtf bruh")
+    return x + y
 
 # Creating manager assignement function
-@periodic_task(run_every=(crontab(minute='*/20')), ignore_result=True)
+# @periodic_task(run_every=(crontab(minute='*/20')), ignore_result=True)
+@app.task(name='service.manager_assignment')
 def manager_assignment():
 
     # Getting unassigned jobs
@@ -126,7 +160,6 @@ def milestone_send_emails(pk, milestoneState, warning):
         # Checking if job is none else returning
         if not job_obj:
             print("rgewrtgertg")
-            revoke('service.tasks.milestone_send_emails')
             return None
 
         print("\n\n\n\nergwetrgewrtg")
@@ -145,7 +178,6 @@ def milestone_send_emails(pk, milestoneState, warning):
 
     except Exception as e:
         print(e)
-        revoke('service.tasks.milestone_send_emails')
         return None
     print('milestones')
 

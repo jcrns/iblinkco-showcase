@@ -1,3 +1,4 @@
+from datetime import timedelta
 import dj_database_url
 import os
 import django_heroku
@@ -46,6 +47,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
 
     # Other libs
+    'django_celery_beat',
+    "verify_email.apps.VerifyEmailConfig",
     'crispy_forms',
     'storages',
     'six'
@@ -159,7 +162,21 @@ EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 465
 EMAIL_USE_SSL = True
 EMAIL_HOST_USER = "confirmemailiblinkco@gmail.com"
-EMAIL_HOST_PASSWORD = "598E,?^r%}UanaW'"
+EMAIL_HOST_PASSWORD = "cziyqvprtpzbvlux"
+
+DEFAULT_FROM_EMAIL = 'noreply<no_reply@domain.com>'
+# HTML_MESSAGE_TEMPLATE = "users/activate_email.html"
+
+# Celery 
+CELERY_BROKER_URL = 'redis://127.0.0.1:6379'
+CELERY_RESULT_BACKEND = 'redis://127.0.0.1:6379'
+CELERY_IMPORTS = ("service", "users", "management")
+# CELERY_BROKER_URL = os.environ.get('REDIS_URL')
+CELERY_BEAT_SCHEDULER = 'django_celery_beat.schedulers:DatabaseScheduler'
+# CELERY_BROKER_URL = 'redis://:p8a6e92eaef193a3658865fc5573c7f9f56f66401f5b9fd5e9216f82887270f7b@ec2-3-222-30-58.compute-1.amazonaws.com:31820'
+CELERY_ACCEPT_CONTENT = ['json']
+CELERY_TASK_SERIALIZER = 'json'
+
 
 AUTHENTICATION_BACKENDS = (
     # 'django.contrib.auth.backends.ModelBackend',
@@ -173,7 +190,7 @@ CHANNEL_LAYERS = {
     'default': {
         'BACKEND': 'channels_redis.core.RedisChannelLayer',
         'CONFIG': {
-            "hosts": [os.environ.get('REDIS_URL', 'redis://localhost:6379')],
+            "hosts": [os.environ.get('REDIS_URL', 'redis://127.0.0.1:6379')],
         },
     },
 }
@@ -207,7 +224,4 @@ AWS_S3_FILE_OVERWRITE = False
 AWS_DEFAULT_ACL = None
 DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
 
-# Celery 
-CELERY_BROKER_URL = os.environ.get('CELERY_BROKER_URL')
-CELERY_ACCEPT_CONTENT = ['json']
-CELERY_TASK_SERIALIZER = 'json'
+
