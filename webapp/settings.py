@@ -16,7 +16,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = "ro5rd^(wia%&wji)uc@st(6l@e)-^0e$o*wx-3w=v8^!6m=d%e"
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = ["*"]
 
@@ -168,12 +168,10 @@ DEFAULT_FROM_EMAIL = 'noreply<no_reply@domain.com>'
 # HTML_MESSAGE_TEMPLATE = "users/activate_email.html"
 
 # Celery 
-CELERY_BROKER_URL = 'redis://127.0.0.1:6379'
-CELERY_RESULT_BACKEND = 'redis://127.0.0.1:6379'
+CELERY_BROKER_URL = os.environ.get('REDIS_URL')
+CELERY_RESULT_BACKEND = os.environ.get('REDIS_URL')
 CELERY_IMPORTS = ("service", "users", "management")
-# CELERY_BROKER_URL = os.environ.get('REDIS_URL')
 CELERY_BEAT_SCHEDULER = 'django_celery_beat.schedulers:DatabaseScheduler'
-# CELERY_BROKER_URL = 'redis://:p8a6e92eaef193a3658865fc5573c7f9f56f66401f5b9fd5e9216f82887270f7b@ec2-3-222-30-58.compute-1.amazonaws.com:31820'
 CELERY_ACCEPT_CONTENT = ['json']
 CELERY_TASK_SERIALIZER = 'json'
 
@@ -217,8 +215,8 @@ STRIPE_SECRET_KEY = os.environ.get('STRIPE_SECRET_KEY')
 STRIPE_CONNECT_CLIENT_ID = os.environ.get('STRIPE_CONNECT_CLIENT_ID')
 
 # AWS E3
-AWS_ACCESS_KEY_ID = "AKIA3YGF6HNLCDZYH7UC"
-AWS_SECRET_ACCESS_KEY = "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"
+AWS_ACCESS_KEY_ID = os.environ.get('AWS_ACCESS_KEY_ID')
+AWS_SECRET_ACCESS_KEY = os.environ.get('AWS_SECRET_ACCESS_KEY')
 AWS_STORAGE_BUCKET_NAME = "iblinkco-django"
 AWS_S3_FILE_OVERWRITE = False
 AWS_DEFAULT_ACL = None
