@@ -1,0 +1,49 @@
+.site-header .header-inner .site-nav .nav-right .nav-btn {
+    background: #fff;
+    -webkit-box-shadow: 0px 20px 30px 0px rgba(79, 35, 35, 0.15);
+    box-shadow: 0px 20px 30px 0px rgba(79, 35, 35, 0.15);
+    color: #FF8A00;
+    display: inline-block;
+    padding: 7px 37px;
+    font-weight: 600;
+    border-radius: 30px;
+    font-size: 14px;
+    border: 2px solid transparent;
+}
+
+.site-header .header-inner .site-nav .nav-right .nav-btn:hover {
+    background: #FF8A00;
+    color: #fff;
+}
+.pix-btn {
+    padding: 8px 30px;
+    background: #FF8A00;
+    border-radius: 30px;
+    display: inline-block;
+    font-size: 14px;
+    color: #fff;
+    font-weight: 600;
+    -webkit-box-shadow: 0px 20px 30px 0px rgba(176, 70, 70, 0.3);
+    box-shadow: 0px 20px 30px 0px rgba(176, 70, 70, 0.3);
+}
+.pix-btn.btn-outline {
+    border: 1px solid #FF8A00;
+    background: transparent;
+    color: #FF8A00;
+    -webkit-box-shadow: none;
+    box-shadow: none;
+}
+
+.pix-btn.btn-outline:hover {
+    background: #FF8A00;
+    color: #fff;
+    -webkit-box-shadow: 0px 20px 30px 0px rgba(176, 70, 70, 0.3);
+    box-shadow: 0px 20px 30px 0px rgba(176, 70, 70, 0.3);
+}
+#footer .footer-social-link li a:hover {
+    background: #FF8A00;
+    border-color: #FF8A00;
+    color: #fff;
+    -webkit-box-shadow: 0px 20px 30px 0px rgba(176, 70, 70, 0.3);
+    box-shadow: 0px 20px 30px 0px rgba(176, 70, 70, 0.3);
+}

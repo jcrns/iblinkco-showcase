@@ -1,0 +1,98 @@
+{% extends 'homepage/header.html' %}
+{% load static %}
+{% block content %}
+<style>
+    .complete-profile {
+        padding: 120px 0;
+    }
+    #submit-button {
+        width: 100px;
+        color: #fff;
+    }
+    input[type=submit] {
+        width: 175px;
+        color: grey;
+        /* text-decoration: none; */
+    }
+    input[type=submit]:hover {
+        /* color: grey; */
+        text-decoration: none;
+    }
+</style>
+<div class="container complete-profile">
+    <h2>Complete Profile</h2>
+    <small>Note: This data will be shown to managers you work with in the future. This can be changed later.</small>
+    <form method="POST" action="{% url 'users-confirm-user-type' %}">
+        <!-- Token block needed for added security -->
+        {% csrf_token %}
+        <input type="hidden" value="False" name="if-manager-or-client">
+        <div class="row">
+            <input id="i-am-manager-button" class="btn btn-link" type="submit" value="I am a manager">
+        </div>
+    </form>
+    <div class="card card-warning">
+        <!-- /.card-header -->
+        <div class="card-body">
+            <form method="POST" enctype='multipart/form-data'>
+                <!-- Token block needed for added security -->
+                {% csrf_token %}
+                <div class="row">
+                    <div class="col-sm-6">
+                        <div class="form-group">
+                            {{ form.first_name.label }}
+                            {{ form.first_name }}
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="form-group">
+                            {{ form.last_name.label }}
+                            {{ form.last_name }}
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-6">
+                        <div class="form-group">
+                            {{ form.business_name.label }}
+                            {{ form.business_name }}
+                        </div>
+                    </div>
+                    <div class="col-sm-3">
+                        <div class="form-group">
+                            {{ form.business_type.label }}
+                            {{ form.business_type }}
+                        </div>
+                    </div>
+                    <div class="col-sm-3">
+                        <div class="form-group">
+                            {{ form.language.label }}
+                            {{ form.language }}
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-12">
+                        <!-- textarea -->
+                        <div class="form-group">
+                            {{ form.description.label }}   
+                            <br>
+                            <small>What does your business do? What is your goal on social media?</small>
+                            {{ form.description }}
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-12">
+                        <!-- textarea -->
+                        <div class="form-group">
+                            Business {{ form.image.label }}(Logo)
+                            {{ form.image }}
+                        </div>
+                    </div>
+                </div>
+                <input id="submit-button" type="submit" class="btn btn-primary" value="Continue">
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

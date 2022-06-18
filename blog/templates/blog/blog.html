@@ -1,0 +1,45 @@
+{% extends 'homepage/header.html' %}
+{% load static %}
+{% block content %}
+<div class="blog-post-archive">
+			<div class="container">
+                <h1>Blog</h1>
+                <br>
+				<div class="row">
+                    {% for post in posts %}
+                        <div class="col-lg-4 col-md-6">
+                            <article class="post-post-grid">
+                                <div class="feature-image">
+                                    <a href="blog-signle.html">
+                                        <img src="media/blog/13.jpg" alt="">
+                                    </a>
+                                </div>
+                                <div class="blog-content">
+                                    <ul class="post-meta">
+                                        <li>{{ post.date_posted|date:"F d, Y" }}</li>
+                                    </ul>
+
+                                    <h3 class="entry-title"><a href="#">{{ post.title }}</a></h3>
+
+                                    <div class="author">
+                                        <!-- <img src="media/blog/auth2.jpg" alt="author"> -->
+                                        <a href="#" class="author-link">{{ post.author }}</a>
+                                    </div>
+
+                                </div><!-- /.post-content -->
+                            </article><!-- /.post -->
+                        </div>
+                    {% endfor %}
+					<!-- /.col-lg-4 -->
+					<!-- /.col-lg-4 -->
+				</div>
+				<!-- /.row -->
+
+				<ul class="post-navigation">
+					<li class="active">1</li>
+					<li><a href="#">2</a></li>
+					<li class="next"><a href="#"><i class="ei ei-arrow_carrot-right"></i></a></li>
+				</ul>
+			</div><!-- /.container -->
+		</div>
+{% endblock %}

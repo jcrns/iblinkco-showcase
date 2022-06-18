@@ -1,0 +1,62 @@
+{% extends 'homepage/header.html' %}
+{% load static %}
+{% block content %}
+<style>
+    .evaluation {
+        padding: 120px 0;
+        position: relative;
+        background-color: #F5F5F5;
+    }
+
+    #submit-button {
+        width: 200px;
+    }
+
+    #form-row {
+        margin-top: 100px;
+    }
+</style>
+<div class="evaluation">
+    <div class="container">
+        <h3>Evaluation</h3>
+        <p>You’ve been assigned to work with the Local Cat Vet. They are looking to grow their following and increase
+            their
+            consistency on social media Here is their profile and two sample posts. Find related content, a picture, to
+            create a
+            post related to this business.</p>
+        <form method="POST" enctype='multipart/form-data' class="text-left">
+            {% csrf_token %}
+            <div class="row" id="pics-row">
+                <div class="col-lg-6 text-center">
+                    <img class="h-100" src="{% static 'homepage/img/evaluation/question_two_post_one.png' %}" alt="">
+                </div>
+                <div class="col-lg-6 text-center">
+                    <img class="h-100" src="{% static 'homepage/img/evaluation/question_two_post_two.png' %}" alt="">
+
+                </div>
+            </div>
+            <div class="row" id="form-row">
+                <div class="col-lg-6">
+                    <p>Describe the problems you see with these posts and how you would improve them.</p>
+                    <div class="text-center">
+                        {{ form.answer_two_what_are_problems }}
+                    </div>
+                </div>
+                <div class="col-lg-6">
+                    <p>Create a caption here. Make sure to include at least 5 hashtags. Enter the img at the bottom.</p>
+                    <div class="text-center">
+                        {{ form.answer_two_caption }}
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-12">
+                    <p>Upload Post Image</p>
+                    {{ form.answer_two_img }}
+                </div>
+            </div>
+            <input type="submit" id="submit-button" class="btn btn-outline-success" value="Next Page">
+        </form>
+    </div>
+</div>
+{% endblock %}

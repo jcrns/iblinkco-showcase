@@ -1,0 +1,26 @@
+{% block content %}
+{% load crispy_forms_tags %}
+<form method="POST" action="{% url 'users-signup' %}">
+    {% if form_register.errors %}
+        {% for field in form_register %}
+            {% for error in field.errors %}
+                {{ error|escape }}
+            {% endfor %}
+        {% endfor %}
+    {% endif %}
+    {% if messages %}
+        {% for message in messages %}
+        <div class="alert alert-{{ message.tags }}">
+            {{ message }}
+        </div>
+        {% endfor %}
+    {% endif %}
+    <!-- Token block needed for added security -->
+    {% csrf_token %}
+    
+    <!-- Imported form.py and is using add on Crispy forms to enhance look-->
+    {{ form_register|crispy }}
+    <input type="hidden" name="current-path" id="current-path" value="{{ request.resolver_match.url_name }}">
+    <input class="btn-success" type="submit" value="Next">
+</form>
+{% endblock %}

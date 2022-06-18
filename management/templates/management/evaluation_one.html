@@ -1,0 +1,73 @@
+{% extends 'homepage/header.html' %}
+{% load static %}
+{% block content %}
+<style>
+    .evaluation {
+        padding: 120px 0;
+        position: relative;
+        background-color: #F5F5F5;
+    }
+
+    #submit-button {
+        width: 200px;
+    }
+
+    #job-intro {
+        color: #797687;
+    }
+
+    #job-context {
+        color: #797687;
+        margin-top: 30px;
+    }
+
+    #pics-row {
+        margin-top: 75px;
+    }
+</style>
+<div class="evaluation">
+    <div class="container">
+        <form method="POST" class="text-left">
+            {% csrf_token %}
+            <h3>Evaluation</h3>
+            <h5 id="job-intro">You’ve been assigned to work with McDermott Inc, showcasing bay area communities art with
+                innovation, originality and
+                imagination. They currently have ~200 followers on Facebook and are looking to grow their client base.
+            </h5>
+
+            <p id="job-context">They have found and taken 3 images to promote their local art history event next week.
+                Create a
+                caption for these posts. Make
+                sure to use relevant hashtags and to have a detailed caption.</p>
+
+            <div class="row" id="pics-row">
+                <div class="col-lg-4 text-center d-flex align-items-center justify-content-center">
+                    <img class="img-fluid" src="{% static 'homepage/img/evaluation/question_one_post_one.png' %}"
+                        alt="">
+                </div>
+                <div class="col-lg-4 text-center d-flex align-items-center justify-content-center">
+                    <img class="mg-fluid" src="{% static 'homepage/img/evaluation/question_one_post_two.png' %}"
+                        alt="">
+
+                </div>
+                <div class="col-lg-4 text-center d-flex align-items-center justify-content-center">
+                    <img class="img-fluid" src="{% static 'homepage/img/evaluation/question_one_post_three.png' %}"
+                        alt="">
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-lg-4 text-center">
+                    {{ form.answer_one_caption_one }}
+                </div>
+                <div class="col-lg-4 text-center">
+                    {{ form.answer_one_caption_two }}
+                </div>
+                <div class="col-lg-4 text-center">
+                    {{ form.answer_one_caption_three }}
+                </div>
+            </div>
+            <input type="submit" id="submit-button" class="btn btn-outline-success" value="Next Page">
+        </form>
+    </div>
+</div>
+{% endblock %}

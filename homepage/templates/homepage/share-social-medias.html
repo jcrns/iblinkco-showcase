@@ -1,0 +1,44 @@
+{% extends 'homepage/header.html' %}
+{% load static %}
+{% block content %}
+<style>
+    section {
+        margin-top: 150px;
+        margin-bottom: 200px;
+    }
+    .row {
+        padding-top: 30px;
+    }
+    ol li {
+        font-size: 17px;
+        padding-top: 5px;
+    }
+    h2 {
+        margin-left: -15px;
+    }
+</style>
+<section class="featured">
+    <div class="container">
+        <h2>Share Social Media Accounts Safely</h2>
+        <div class="row">
+            <div class="col-12-sm col-6-md">
+                <h5>For Businesses</h5>
+                <ol>
+                    <li>Connect Facebook and Instagram Accounts Together</li>
+                    <li>Go to Facebook (Page not account) Settings and Click Page Roles</li>
+                    <li>Ask managers for Facebook username</li>
+                    <li>Assign their roles as editors</li>
+                </ol>
+            </div>
+            <div class="col-12-sm col-6-md">
+                <h5>For Managers</h5>
+                <ol>
+                    <li>Prepare to give managers your email linked to your Facebook for safe access</li>
+                    <li>Accept invitation to manage social media page</li>
+                    <li>Open clients page and click on the "Publishing Tools" tab</li>
+                </ol>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

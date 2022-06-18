@@ -1,0 +1,133 @@
+{% extends 'homepage/header.html' %}
+{% load static %}
+{% block content %}
+<style>
+    .evaluation {
+        padding: 120px 0;
+        position: relative;
+    }
+    #sub-title {
+        color: #797687;
+    }
+    #submit-button {
+        width: 200px;
+    }
+    .number-item {
+        position: relative;
+        display: block;
+        padding: .75rem 1.25rem;
+        background-color: #fff;
+        /* border: 1px solid rgba(0,0,0,.125); */
+    }
+    .row {
+        margin-left: 0px;
+    }
+
+    .row-item-evaluation {
+        padding-left: 0px;
+    }
+
+    .prefered-platform input {
+        width: 5%;
+    }
+    .form-group {
+        margin-bottom: 2rem;
+    }
+</style>
+<div class="evaluation">
+    {% if messages %}
+    {% for message in messages %}
+    <div class="alert alert-{{ message.tags }}">
+        {{ message }}
+    </div>
+    {% endfor %}
+    {% endif %}
+    <div class="container">
+        <form method="POST" id="myForm" onsubmit="formPosted()">
+            {% csrf_token %}
+            <h3>Setup Preferences</h3>
+
+            <p>Choose your ideal job. This affects what type of jobs you are assigned to. You will be able to change this later.</p>
+            <div class="row">
+                <div class="col-lg-6 row-item-evaluation">
+                    <p>Rank these items in order of what type of businesses you would want to manager</p>     
+                    <div class="d-flex justify-content-center">   
+                        <ul>
+                            {% for item in form.businessChoices %}
+                                <li class="number-item">{{ forloop.counter }}.</li>
+                            {% endfor %}
+                        </ul>
+                        <ul id="items" class="text-center">
+                            {% for item in form.businessChoices %}
+                                <li data-name="{{ item }}" class="list-group-item">{{ item }}</li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                </div>
+                <div class="col-lg-6 row-item-evaluation"> 
+                    <div class="form-group">
+                        Choose Platform
+                        <br>
+                        <small>What platform do you prefer to work on?</small>    
+                        <p class="prefered-platform">
+                            {{ form.instagram.label }}
+                            {{ form.instagram }}
+                        </p>
+                        <p class="prefered-platform">
+                            {{ form.facebook.label }}
+                            {{ form.facebook }}
+                        </p>
+                    </div>
+                    <div class="form-group">
+                        {{ form.length.label }}
+                        <br>
+                        <small>How long do you want your jobs to be?</small>
+                        {{ form.length }}
+                    </div>
+                    <div class="form-group">
+                        {{ form.post_per_day.label }} (for each platform)
+                        <br>
+                        <small>If this box is checked, managers will write captions for content you provide them.</small>
+                        {{ form.post_per_day }}
+                    </div>
+                </div>
+            </div>
+            <input type="hidden" id="final-list-order" name="final-list-order" >
+            <input type="submit" id="submit-button" class="btn btn-outline-success" value="Next Page">
+                
+        </form>
+    </div>
+</div>
+<script>
+    var el = document.getElementById('items');
+    var sortable = Sortable.create(el);
+
+    function formPosted(){
+        // Getting list
+        var itemsList = document.getElementById('items');
+
+        // Creating list variable
+        let finalItemOrder = []
+
+        // Looping through list items and appending to main list in order
+        for (var i=0; i<itemsList.childNodes.length; i++) {
+            console.log("itemsList.childNodes[i]");
+            var itemText = itemsList.childNodes[i].innerHTML;
+            if(typeof itemText !== "undefined"){
+                console.log(itemText);
+                finalItemOrder.push(itemText)
+            }
+        }
+
+        console.log("finalItemOrder");
+        console.log(finalItemOrder);
+        console.log("itemsList");
+        console.log(itemsList);
+        console.log(itemsList.childNodes.length);
+
+        // Adding final list to hidden input
+        var inputItemList = document.getElementById('final-list-order');
+        inputItemList.value = finalItemOrder
+    }
+</script>
+{% endblock %}
